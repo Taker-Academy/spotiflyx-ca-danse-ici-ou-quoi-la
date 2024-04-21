@@ -4,7 +4,7 @@ import(
 	"os"
 	"fmt"
 	"github.com/joho/godotenv"
-	"spotiflix/models"
+	"spotiflix/database/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
