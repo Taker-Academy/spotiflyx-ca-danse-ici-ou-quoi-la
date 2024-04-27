@@ -9,7 +9,7 @@ import(
 	"gorm.io/gorm"
 )
 
-func (database *models.database)load_env() (error) {
+func load_env(database *models.Database) {
 	godotenv.Load()
 
 	database.Host = (os.Getenv("DB_HOST"))
@@ -18,19 +18,17 @@ func (database *models.database)load_env() (error) {
 	database.User = (os.Getenv("DB_USER"))
 }
 
-func init_database() (models.database, error) {
-	var new models.database
+func Init_database() (models.Database, error) {
+	var new models.Database
+	var err error
 
-	err := new.load_env() 
-	if err != nil {
-		return (nil, err)
-	}
+	load_env(&new)
 	database_url := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 								new.Host, new.Port, new.User, new.Password, new.Name)
 	new.DB, err = gorm.Open(postgres.Open(database_url), &gorm.Config{})
 	if err != nil {
-		return (nil, err)
+		return models.Database{}, err
 	}
-	new.DB.AutoMigrate(&models.user{})
-	return (new, nil)
+	new.DB.AutoMigrate(&models.User{})
+	return new, nil
 }

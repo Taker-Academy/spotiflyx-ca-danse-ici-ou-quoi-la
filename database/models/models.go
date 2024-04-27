@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type database struct {
+type Database struct {
 	Host string
 	Port string
 	Password string
@@ -13,10 +13,14 @@ type database struct {
 	DB *gorm.DB
 }
 
-type user struct {
+type User struct {
 	Id       string `gorm:"primaryKey" json:"Id"`
 	Email string `json:"email"`
 	Password string `json:"password"`
+	Musics []string `json:"musics"`
 }
 
-type
+type New_user struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
