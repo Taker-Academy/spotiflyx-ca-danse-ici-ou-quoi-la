@@ -2,13 +2,27 @@ package handler
 
 import(
 	"spotiflix/database/user_handling"
+	"spotiflix/global_api/token"
 	"io"
+	"fmt"
 	"encoding/json"
 	"net/http"
 	"strings"
 	"github.com/gin-gonic/gin"
 	"spotiflix/database/models"
 )
+
+func Get_user_response(Email string, Id string) (models.Response_user, error) {
+	var to_return models.Response_user
+	var err error
+
+	to_return.Token, err = token.Generate_token(Id)
+	if (err != nil) {
+		return models.Response_user{}, err
+	}
+	to_return.Email = Email
+	return to_return, nil
+}
 
 func Create_user(data_base models.Database) gin.HandlerFunc {
 	fn := func(ctx *gin.Context) {
@@ -22,6 +36,7 @@ func Create_user(data_base models.Database) gin.HandlerFunc {
 		decoder := json.NewDecoder(strings.NewReader(string(json_data)))
 		decoder.DisallowUnknownFields()
 		err = decoder.Decode(&tmp)
+		fmt.Println(decoder)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
 			return
@@ -31,7 +46,10 @@ func Create_user(data_base models.Database) gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, "email already found")
 			return
 		}
-		user_handling.Insert_new_user(data_base.DB, tmp.Email, tmp.Password)
+		id, err := user_handling.Insert_new_user(data_base.DB, tmp.Email, tmp.Password)
+		response, err := Get_user_response(tmp.Email, id)
+		ctx.JSON(http.StatusOK, response)
+		return
 	}
 	return fn;
 }

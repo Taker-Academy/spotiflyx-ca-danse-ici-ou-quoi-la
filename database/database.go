@@ -23,9 +23,13 @@ func Init_database() (models.Database, error) {
 	var err error
 
 	load_env(&new)
-	database_url := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-								new.Host, new.Port, new.User, new.Password, new.Name)
-	new.DB, err = gorm.Open(postgres.Open(database_url), &gorm.Config{})
+	dsn := fmt.Sprintf(
+		"host=db user=%s password=%s dbname=%s port=5432 sslmode=disable",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+	)
+	new.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return models.Database{}, err
 	}

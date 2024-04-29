@@ -21,6 +21,11 @@ type User struct {
 }
 
 type New_user struct {
+	Email     string `bson:"email", json:"email"`
+	Password  string `bson:"password", json:"password"`
+}
+
+type Response_user struct {
+	Token string `json:"token"`
 	Email string `json:"email"`
-	Password string `json:"password"`
 }
