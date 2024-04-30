@@ -43,7 +43,7 @@ func Create_user(data_base models.Database) gin.HandlerFunc {
 		}
 		_, err = user_handling.Find_user_by_email(data_base.DB, tmp.Email)
 		if err == nil {
-			ctx.JSON(http.StatusBadRequest, "email already found")
+			ctx.JSON(http.StatusUnauthorized, "email already used")
 			return
 		}
 		id, err := user_handling.Insert_new_user(data_base.DB, tmp.Email, tmp.Password)

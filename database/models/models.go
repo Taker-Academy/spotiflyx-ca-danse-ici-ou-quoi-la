@@ -29,3 +29,7 @@ type Response_user struct {
 	Token string `json:"token"`
 	Email string `json:"email"`
 }
+
+type Response_remove struct {
+	Ok bool `json:"ok"`
+}

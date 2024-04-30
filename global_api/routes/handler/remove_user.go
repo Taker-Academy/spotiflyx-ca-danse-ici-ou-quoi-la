@@ -32,7 +32,7 @@ func Remove_user(data_base models.Database) gin.HandlerFunc {
 			return
 		}
 		data_base.DB.Where("id = ?", token_id).Delete(&models.User{})
-		ctx.JSON(http.StatusOK, true)
+		ctx.JSON(http.StatusOK, models.Response_remove{Ok: true})
 		return
 	}
 	return fn

@@ -29,11 +29,11 @@ func Login(data_base models.Database) gin.HandlerFunc {
 		}
 		user, err := user_handling.Find_user_by_email(data_base.DB, tmp.Email)
 		if (err != nil) {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err})
 			return
 		}
 		if (hash.Hash_password(tmp.Password) != user.Password) {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "incorect password"})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "incorect password"})
 			return
 		}
 		response, err := Get_user_response(user.Id, tmp.Email)
