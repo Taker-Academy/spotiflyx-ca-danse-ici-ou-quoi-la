@@ -1,4 +1,4 @@
-# Documentation de l'API, by Stephane
+# Documentation de l'API spotiflix
 
 ## Schéma de la base de données
 
