@@ -34,5 +34,6 @@ func Init_database() (models.Database, error) {
 		return models.Database{}, err
 	}
 	new.DB.AutoMigrate(&models.User{})
+	new.DB.AutoMigrate(&models.Database_spotify_favorite{})
 	return new, nil
 }

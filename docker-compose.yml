@@ -16,6 +16,8 @@ services:
   api:
     depends_on:
       - db
+    environment:
+      - SECRET_STRING="fuck docker"
     build: ./
     ports:
       - "8080:8080"

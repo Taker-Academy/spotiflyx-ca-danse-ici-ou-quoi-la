@@ -42,7 +42,6 @@ func Login(data_base models.Database) gin.HandlerFunc {
 			return
 		}
 		ctx.JSON(http.StatusOK, response)
-		return
 	}
 	return fn
 }

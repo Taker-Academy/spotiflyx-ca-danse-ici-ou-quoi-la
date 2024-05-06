@@ -1,16 +1,18 @@
 package handler
 
-import(
-	"spotiflix/global_api/token"
+import (
 	"encoding/json"
-	"net/http"
 	"io"
-	"strings"
-	"github.com/gin-gonic/gin"
+	"net/http"
 	"spotiflix/database/models"
+	"spotiflix/database/favorites_handling"
+	"spotiflix/global_api/token"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
-func Remove_user(data_base models.Database) gin.HandlerFunc {
+func Set_favorite_music(data_base models.Database) gin.HandlerFunc {
 	fn := func(ctx *gin.Context) {
 		token_id, err, code := token.Verify_token(ctx)
 		if err != nil {
@@ -22,7 +24,7 @@ func Remove_user(data_base models.Database) gin.HandlerFunc {
 			ctx.JSON(http.StatusInternalServerError, err)
 			return
 		}
-		var tmp models.New_user
+		var tmp models.Contex_favorite
 		json.Unmarshal(json_data, &tmp)
 		decoder := json.NewDecoder(strings.NewReader(string(json_data)))
 		decoder.DisallowUnknownFields()
@@ -31,8 +33,8 @@ func Remove_user(data_base models.Database) gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
 			return
 		}
-		data_base.DB.Where("id = ?", token_id).Delete(&models.User{})
-		ctx.JSON(http.StatusOK, models.Response_remove{Ok: true})
+		favorite_handling.Insert_in_spotify_favorites(data_base.DB, token_id, tmp.Link)
+		ctx.JSON(http.StatusOK, models.Fav_response{Ok: true})
 	}
 	return fn
 }

@@ -5,24 +5,23 @@ import (
 )
 
 type Database struct {
-	Host string
-	Port string
+	Host     string
+	Port     string
 	Password string
-	User string
-	Name string
-	DB *gorm.DB
+	User     string
+	Name     string
+	DB       *gorm.DB
 }
 
 type User struct {
 	Id       string `gorm:"primaryKey" json:"Id"`
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
-	Musics []string `json:"musics"`
 }
 
 type New_user struct {
-	Email     string `bson:"email", json:"email"`
-	Password  string `bson:"password", json:"password"`
+	Email    string `bson:"email", json:"email"`
+	Password string `bson:"password", json:"password"`
 }
 
 type Response_user struct {
@@ -32,4 +31,22 @@ type Response_user struct {
 
 type Response_remove struct {
 	Ok bool `json:"ok"`
+}
+
+type Database_spotify_favorite struct {
+	Id   string `gorm:"primaryKey" json:"Id"`
+	Link string `json:"link"`
+}
+
+type Contex_favorite struct {
+	Link string `json:"link"`
+}
+
+type Fav_response struct {
+	Ok bool `json:"ok"`
+}
+
+type Get_links_response struct {
+	Ok   bool              `json:"ok"`
+	Data []Contex_favorite `json:"data"`
 }
