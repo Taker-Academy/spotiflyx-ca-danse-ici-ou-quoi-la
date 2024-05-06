@@ -1,10 +1,11 @@
 package database
 
-import(
-	"os"
+import (
 	"fmt"
-	"github.com/joho/godotenv"
+	"os"
 	"spotiflix/database/models"
+
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

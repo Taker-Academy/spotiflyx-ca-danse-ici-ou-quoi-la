@@ -9,7 +9,7 @@ import (
 func Get_spotify_favorte_by_Id(Id string, database *gorm.DB) []models.Database_spotify_favorite {
 	var search_favorites []models.Database_spotify_favorite
 
-	_ = database.First(&search_favorites, "id = ?", Id).Select(Id)
+	_ = database.Find(&search_favorites, "id = ?", Id).Select(Id)
 	return search_favorites
 }
 

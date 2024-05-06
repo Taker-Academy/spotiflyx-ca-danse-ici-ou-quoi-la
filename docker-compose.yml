@@ -17,12 +17,14 @@ services:
     depends_on:
       - db
     environment:
-      - SECRET_STRING="fuck docker"
+      - SECRET_STRING=${SECRET_STRING}
     build: ./
     ports:
       - "8080:8080"
     networks:
       - spotiflix
+    volumes:
+      - ./:/app/spotiflix/
 
 networks:
   spotiflix:

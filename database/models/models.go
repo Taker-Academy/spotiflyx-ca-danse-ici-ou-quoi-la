@@ -34,8 +34,8 @@ type Response_remove struct {
 }
 
 type Database_spotify_favorite struct {
-	Id   string `gorm:"primaryKey" json:"Id"`
-	Link string `json:"link"`
+	Id   string `gorm:"primary_key;autoIncrement:false", json:"Id"`
+	Link string `gorm:"primary_key;autoIncrement:false", json:"link"`
 }
 
 type Contex_favorite struct {
