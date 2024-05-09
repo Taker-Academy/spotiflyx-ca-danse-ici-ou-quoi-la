@@ -36,6 +36,9 @@ func Init_database() (models.Database, error) {
 		_ = new.DB.Exec("CREATE DATABASE IF NOT EXISTS " + os.Getenv("DB_NAME") + ";")
 		for i := 0; i < 15; i += 1 {
 			new.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+			if err == nil {
+				break
+			}
 			time.Sleep(2 * time.Second)
 		}
 		if err != nil {
