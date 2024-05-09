@@ -7,13 +7,13 @@ import Navbar from './navbar/navbar';
 import Player from './player/player';
 import MusicCard from './musicCards/musicCards';
 import reportWebVitals from './reportWebVitals';
+import Search from './search/search';
 
 function AppRouter() {
   return (
     <Router>
       <div>
         <Navbar />
-        <Player />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/App" component={App} /> 
@@ -26,25 +26,8 @@ function AppRouter() {
 function Home() {
   return (
     <div className="container"> 
-      <div className="card-container"> 
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
-        <MusicCard />
+      <div className="card-container">
+        <Search></Search>
       </div>
     </div>
   );
