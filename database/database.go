@@ -32,7 +32,11 @@ func Init_database() (models.Database, error) {
 	)
 	new.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return models.Database{}, err
+		_ = new.DB.Exec("CREATE DATABASE IF NOT EXISTS " + os.Getenv("DB_NAME") + ";")
+		new.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			return models.Database{}, err
+		}
 	}
 	new.DB.AutoMigrate(&models.User{})
 	new.DB.AutoMigrate(&models.Database_spotify_favorite{})
