@@ -1,30 +1,31 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import App from './App';
 import Navbar from './navbar/navbar';
-import Player from './player/player';
-import MusicCard from './musicCards/musicCards';
 import reportWebVitals from './reportWebVitals';
 import Search from './search/search';
 import Login from './login/login';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AppRouter() {
     const handleLoginSuccess = () => {
-        ReactDOM.render(
-            <React.StrictMode>
-                <Router>
-                    <Navbar />
-                    <Routes>
-                        <Route path="/" element={<Search />} />
-                        <Route path="/App" component={App} /> 
-                    </Routes>
-                </Router>
-            </React.StrictMode>,
-            document.getElementById('root')
-        );
+        setTimeout(() => {
+            ReactDOM.render(
+                <React.StrictMode>
+                    <Router>
+                        <Navbar />
+                        <Routes>
+                            <Route path="/" element={<Search />} />
+                            <Route path="/App" component={App} /> 
+                        </Routes>
+                    </Router>
+                </React.StrictMode>,
+                document.getElementById('root')
+            );
+        }, 2000);
     };
 
     return (
@@ -53,6 +54,7 @@ function Home({ onLoginSuccess }) {
 ReactDOM.render(
     <React.StrictMode>
         <AppRouter />
+        <ToastContainer />
     </React.StrictMode>,
     document.getElementById('root')
 );

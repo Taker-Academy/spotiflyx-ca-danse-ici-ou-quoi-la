@@ -1,7 +1,8 @@
-// Login.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Card, Form, Button, Row, Col } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = ({ onLoginSuccess }) => {
     const [email, setEmail] = useState('');
@@ -14,13 +15,16 @@ const Login = ({ onLoginSuccess }) => {
         try {
             if (isSignUp) {
                 await axios.post('http://localhost:8080/auth/register', { email, password });
+                toast.success('Inscription réussie !');
             } else {
                 await axios.post('http://localhost:8080/auth/login', { email, password });
-                onLoginSuccess(); // Call login success function
+                toast.success('Connexion réussie ! Bienvenue sur le site.');
+                onLoginSuccess();
             }
             console.log('Success');
         } catch (error) {
             console.error('Error:', error);
+            toast.error('Erreur lors de la connexion ! Veuillez vérifier vos identifiants.');
         }
     };
 
@@ -34,7 +38,7 @@ const Login = ({ onLoginSuccess }) => {
                 <Col md={6}>
                     <Card>
                         <Card.Body>
-                            <Card.Title>{isSignUp ? 'Sign Up' : 'Login'}</Card.Title>
+                            <Card.Title>{isSignUp ? 'Inscription' : 'Connexion'}</Card.Title>
                             <Form onSubmit={handleSubmit}>
                                 <Form.Group className="mb-3" controlId="formBasicEmail">
                                     <Form.Label>Email address</Form.Label>
