@@ -29,6 +29,11 @@ type Response_user struct {
 	Email string `json:"email"`
 }
 
+type Response_get_user struct {
+	Id string `json:"id"`
+	Email string `json:"email"`
+}
+
 type Response_remove struct {
 	Ok bool `json:"ok"`
 }
