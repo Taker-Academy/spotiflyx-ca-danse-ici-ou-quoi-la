@@ -1,5 +1,6 @@
+
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import App from './App';
@@ -8,36 +9,52 @@ import Player from './player/player';
 import MusicCard from './musicCards/musicCards';
 import reportWebVitals from './reportWebVitals';
 import Search from './search/search';
+import Login from './login/login';
 
 function AppRouter() {
-  return (
-    <Router>
-      <div>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/App" component={App} /> 
-        </Routes>
-      </div>
-    </Router>
-  );
+    const handleLoginSuccess = () => {
+        ReactDOM.render(
+            <React.StrictMode>
+                <Router>
+                    <Navbar />
+                    <Routes>
+                        <Route path="/" element={<Search />} />
+                        <Route path="/App" component={App} /> 
+                    </Routes>
+                </Router>
+            </React.StrictMode>,
+            document.getElementById('root')
+        );
+    };
+
+    return (
+        <Router>
+            <div>
+                <Navbar />
+                <Routes>
+                    <Route path="/" element={<Home onLoginSuccess={handleLoginSuccess} />} />
+                    <Route path="/App" component={App} /> 
+                </Routes>
+            </div>
+        </Router>
+    );
 }
 
-function Home() {
-  return (
-    <div className="container"> 
-      <div className="card-container">
-        <Search></Search>
-      </div>
-    </div>
-  );
+function Home({ onLoginSuccess }) {
+    return (
+        <div className="container"> 
+            <div className="card-container">
+                <Login onLoginSuccess={onLoginSuccess} />
+            </div>
+        </div>
+    );
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <AppRouter />
-  </React.StrictMode>
+ReactDOM.render(
+    <React.StrictMode>
+        <AppRouter />
+    </React.StrictMode>,
+    document.getElementById('root')
 );
 
 reportWebVitals();
