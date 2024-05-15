@@ -47,14 +47,14 @@ function Favorites() {
               id: track.id,
               title: track.name,
               artist: track.artists.map(artist => artist.name).join(', '),
-              cover: track.album.images[0].url 
+              cover: track.album.images[0].url
                       };
       } catch (error) {
           console.error('Error fetching track details:', error);
           return null;
       }
   };
-  
+
   const getSpotifyAccessToken = async () => {
       try {
           const response = await axios.post('https://accounts.spotify.com/api/token', null, {
@@ -72,7 +72,7 @@ function Favorites() {
           throw error;
       }
   };
-  
+
 
     const handleRemoveFavorite = async (favoriteId) => {
         try {
@@ -113,3 +113,4 @@ function Favorites() {
     );
 }
 
+export default Favorites;
