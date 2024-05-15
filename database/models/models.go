@@ -29,11 +29,21 @@ type Response_user struct {
 	Email string `json:"email"`
 }
 
+type Response_get_user struct {
+	Id string `json:"id"`
+	Email string `json:"email"`
+}
+
 type Response_remove struct {
 	Ok bool `json:"ok"`
 }
 
 type Database_spotify_favorite struct {
+	Id   string `gorm:"primary_key;autoIncrement:false", json:"Id"`
+	Link string `gorm:"primary_key;autoIncrement:false", json:"link"`
+}
+
+type Database_youtube_favorite struct {
 	Id   string `gorm:"primary_key;autoIncrement:false", json:"Id"`
 	Link string `gorm:"primary_key;autoIncrement:false", json:"link"`
 }

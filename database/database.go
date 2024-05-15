@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"spotiflix/database/models"
+	"time"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -32,9 +33,20 @@ func Init_database() (models.Database, error) {
 	)
 	new.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return models.Database{}, err
+		_ = new.DB.Exec("CREATE DATABASE IF NOT EXISTS " + os.Getenv("DB_NAME") + ";")
+		for i := 0; i < 15; i += 1 {
+			new.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+			if err == nil {
+				break
+			}
+			time.Sleep(2 * time.Second)
+		}
+		if err != nil {
+			return models.Database{}, err
+		}
 	}
 	new.DB.AutoMigrate(&models.User{})
 	new.DB.AutoMigrate(&models.Database_spotify_favorite{})
+	new.DB.AutoMigrate(&models.Database_youtube_favorite{})
 	return new, nil
 }

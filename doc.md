@@ -111,6 +111,39 @@ Cette route permet de connecter un utilisateur existant à l'application. Si les
 
 > Prefix: `/user`
 
+### Endpoint [GET] `` 🔐
+
+## Description
+
+Cette route permet à un utilisateur de recuperer ses informations.
+
+## Paramètres
+
+### Header
+
+- **Authorization (String, required):** Token JWT pour l'authentification.
+
+### Body
+
+- **id (String):** id de l'utilisateur.
+- **email (String):** email de l'utilisateur.
+
+## Format de réponse (200 OK)
+
+```json
+{
+    "id": "id",
+    "email": "john.doe@example.com",
+}
+```
+
+## Réponses Possibles
+- **200 OK:** Informations de l'utilisateur recuperée avec succès.
+- **401 Unauthorized:** Mauvais token JWT.
+- **500 Internal Server Error:** Erreur interne du serveur.
+
+---
+
 ### Endpoint [PUT] `/update` 🔐
 
 ## Description
@@ -166,6 +199,78 @@ Cette route permet à un utilisateur de supprimer son compte.
 
 ## Réponses Possibles
 - **200 OK:** Compte utilisateur supprimé avec succès.
+- **401 Unauthorized:** Mauvais token JWT.
+- **500 Internal Server Error:** Erreur interne du serveur.
+
+---
+
+## User
+
+> Prefix: `/fav`
+
+### Endpoint [GET] `/music` 🔐
+
+## Description
+
+Cette route permet de recuperer les musiques favorites du user
+
+## Paramètres
+
+### Header
+
+- **Authorization (String, required):** Token JWT pour l'authentification.
+
+## Format de réponse (200 OK)
+
+```json
+{
+    "ok": true,
+    "data": [
+        {
+            "link": "exemple"
+        },
+        ...
+    ]
+}
+```
+
+## Réponses Possibles
+- **200 OK:** Favoris recupérés avec succes.
+- **401 Unauthorized:** Mauvais token JWT.
+- **500 Internal Server Error:** Erreur interne du serveur.
+
+---
+
+### Endpoint [POST] `/music` 🔐
+
+## Description
+
+Cette route permet à un utilisateur de creer un favori.
+
+## Paramètres
+
+### Header
+
+- **Authorization (String, required):** Token JWT pour l'authentification.
+
+## Exemple de Requête
+
+```json
+{
+    "link": "exemple",
+}
+```
+
+## Format de réponse (200 OK)
+
+```json
+{
+    "ok": true,
+}
+```
+
+## Réponses Possibles
+- **200 OK:** favori crée avec succes.
 - **401 Unauthorized:** Mauvais token JWT.
 - **500 Internal Server Error:** Erreur interne du serveur.
 

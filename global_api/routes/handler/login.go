@@ -36,7 +36,7 @@ func Login(data_base models.Database) gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "incorect password"})
 			return
 		}
-		response, err := Get_user_response(user.Id, tmp.Email)
+		response, err := Get_user_response(tmp.Email, user.Id)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, err)
 			return

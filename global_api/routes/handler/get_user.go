@@ -4,16 +4,23 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"spotiflix/database/hash"
 	"spotiflix/database/models"
-	"spotiflix/database/user_handling"
 	"spotiflix/global_api/token"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Update_user(data_base models.Database) gin.HandlerFunc {
+func Get_user_response_id(Email string, Id string) (models.Response_get_user) {
+	var to_return models.Response_get_user
+
+	to_return.Id = Id
+	to_return.Email = Email
+	return to_return
+}
+
+
+func Get_user(data_base models.Database) gin.HandlerFunc {
 	fn := func(ctx *gin.Context) {
 		token_id, err, code := token.Verify_token(ctx)
 		if err != nil {
@@ -34,22 +41,13 @@ func Update_user(data_base models.Database) gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
 			return
 		}
-		user, err := user_handling.Find_user_by_email(data_base.DB, tmp.Email)
-		if err == nil && user.Id != token_id {
-			ctx.JSON(http.StatusUnauthorized, "email already used")
-			return
-		}
-		result := data_base.DB.Model(models.User{}).Where("id = ?", token_id).Updates(
-			models.User{Email: tmp.Email, Password: hash.Hash_password(tmp.Password)})
+		var user models.User
+		result := data_base.DB.Model(models.User{}).Where("id = ?", token_id).First(&user)
 		if result.Error != nil {
 			ctx.JSON(http.StatusInternalServerError, result.Error)
 			return
 		}
-		response, err := Get_user_response(tmp.Email, token_id)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, err)
-			return
-		}
+		response := Get_user_response_id(user.Email, token_id)
 		ctx.JSON(http.StatusOK, response)
 	}
 	return fn
