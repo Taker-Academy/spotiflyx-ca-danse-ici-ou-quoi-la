@@ -1,14 +1,16 @@
 package handler
 
-import(
-	"spotiflix/database/hash"
-	"spotiflix/global_api/token"
+import (
 	"encoding/json"
-	"net/http"
 	"io"
-	"strings"
-	"github.com/gin-gonic/gin"
+	"net/http"
+	"spotiflix/database/hash"
 	"spotiflix/database/models"
+	"spotiflix/database/user_handling"
+	"spotiflix/global_api/token"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Update_user(data_base models.Database) gin.HandlerFunc {
@@ -32,9 +34,14 @@ func Update_user(data_base models.Database) gin.HandlerFunc {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
 			return
 		}
+		user, err := user_handling.Find_user_by_email(data_base.DB, tmp.Email)
+		if err == nil && user.Id != token_id {
+			ctx.JSON(http.StatusUnauthorized, "email already used")
+			return
+		}
 		result := data_base.DB.Model(models.User{}).Where("id = ?", token_id).Updates(
 			models.User{Email: tmp.Email, Password: hash.Hash_password(tmp.Password)})
-		if (result.Error != nil) {
+		if result.Error != nil {
 			ctx.JSON(http.StatusInternalServerError, result.Error)
 			return
 		}
