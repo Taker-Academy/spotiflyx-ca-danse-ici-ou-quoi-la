@@ -1,18 +1,12 @@
-body {
-    padding: 100;
-}
-
-.container {
-    margin: 0;
-    padding: 10px;
-}
-
 .card-item {
-    margin: 10px;
-    height: 450px;
-    width: 250px;
+    margin-bottom: 20px; 
 }
 
-.img {
-    object-fit: contain;
+
+
+@media (min-width: 576px) {
+    .card-item {
+        flex: 0 0 calc(33.333% - 20px); 
+        max-width: calc(33.333% - 20px);
+    }
 }

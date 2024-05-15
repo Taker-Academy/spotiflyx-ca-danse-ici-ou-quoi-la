@@ -1,37 +1,26 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { FaLongArrowAltLeft, FaLongArrowAltRight } from "react-icons/fa";
 import './navbar.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoggedIn } from '../actions';
+import { Navigate } from 'react-router-dom';
 
 function Navbar() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [accessToken, setAccessToken] = useState(null);
-  const spotifyClientId = 'fc00e50de4ed4be7bb06faa37378a36e';
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector(state => state.isLoggedIn);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
-
-  const handleSpotifyLogin = () => {
-    const redirectUri = encodeURIComponent(window.location.origin);
-    const scopes = encodeURIComponent('streaming user-read-email user-read-private user-library-read user-library-modify user-read-playback-state user-modify-playback-state');
-    const authorizationUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${spotifyClientId}&scope=${scopes}&redirect_uri=${redirectUri}`;
-
-    window.location.href = authorizationUrl;
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    dispatch(setLoggedIn(false)); 
+    navigate('/login');
   };
-
-  const extractAccessTokenFromURL = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    if (code) {
-      console.log("Token récupéré :", code);
-      setAccessToken(code);
-    }
-  };
-  
-
-  useEffect(() => {
-    extractAccessTokenFromURL();
-  }, []);
 
   return (
     <div className="navbar-wrapper" style={{ width: sidebarVisible ? '200px' : '40px' }}>
@@ -43,16 +32,27 @@ function Navbar() {
         )}
         {sidebarVisible && (
           <div className='logo'>
-            <button className='home' onClick={handleSpotifyLogin}>Spotiflix</button>
+            <button className='home'>
+              <Link to="/home">Spotiflix</Link>
+              </button>
             <FaLongArrowAltLeft className='slide' onClick={toggleSidebar} style={{ visibility: sidebarVisible ? 'visible' : 'hidden' }}></FaLongArrowAltLeft>
           </div>
         )}
         {sidebarVisible && (
           <>
-            <button>Rechercher</button>
-            <button>Musiques favorites</button>
-            <button>Vidéos favorites</button>
-            <button>Mon compte</button>
+            {isLoggedIn && (
+              <button onClick={handleLogout}>Déconnexion</button>
+            )}
+            {isLoggedIn && (
+              <button className='home'>
+                <Link to="/fav">Musiques Favorites</Link>
+              </button>
+            )}
+            {isLoggedIn && (
+              <button className='home'>
+                <Link to="/dashboard">dashboard</Link>
+              </button>
+            )}
           </>
         )}
       </div>
