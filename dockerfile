@@ -8,8 +8,6 @@ COPY . .
 
 RUN go mod tidy
 
-RUN go build -o spotiflix
-
 EXPOSE 8080
 
 CMD reflex -s -g "*.go" go run main.go
