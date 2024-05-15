@@ -1,13 +1,12 @@
-/* Ajoutez ces règles de style dans votre fichier search.css */
 .card-item {
-    margin-bottom: 20px; /* Ajout d'un espacement entre les cartes */
+    margin-bottom: 20px; 
 }
 
 
 
 @media (min-width: 576px) {
     .card-item {
-        flex: 0 0 calc(33.333% - 20px); /* Répartition en 3 colonnes sur les écrans de taille moyenne */
+        flex: 0 0 calc(33.333% - 20px); 
         max-width: calc(33.333% - 20px);
     }
 }

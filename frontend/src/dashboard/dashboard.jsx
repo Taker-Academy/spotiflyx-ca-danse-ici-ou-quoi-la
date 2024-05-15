@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Card, Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const Dashboard = ({ token }) => {
+const Dashboard = () => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [token, setToken] = useState('');
+
+    useEffect(() => {
+        const storedToken = localStorage.getItem('token');
+        setToken(storedToken);
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            console.log(token);
             if (newPassword !== confirmNewPassword) {
                 toast.error("Les nouveaux mots de passe ne correspondent pas !");
                 return;
@@ -21,20 +28,16 @@ const Dashboard = ({ token }) => {
                 { password: newPassword },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-    
-            // Vérifier le statut de la réponse
             if (response.status === 200) {
                 toast.success("Mot de passe modifié avec succès !");
                 setOldPassword('');
                 setNewPassword('');
                 setConfirmNewPassword('');
             } else {
-                // Si la réponse n'est pas réussie, afficher un message d'erreur
                 toast.error("Une erreur s'est produite lors de la modification du mot de passe !");
             }
         } catch (error) {
             console.error('Error:', error);
-            // Gérer les erreurs de requête
             toast.error('Erreur lors de la modification du mot de passe !');
         }
     };

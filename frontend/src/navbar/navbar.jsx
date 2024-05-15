@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { FaLongArrowAltLeft, FaLongArrowAltRight } from "react-icons/fa";
 import './navbar.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; // Importez useDispatch et useSelector depuis 'react-redux'
-import { setLoggedIn } from '../actions'; // Importez l'action setLoggedIn
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoggedIn } from '../actions';
 import { Navigate } from 'react-router-dom';
 
 function Navbar() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector(state => state.isLoggedIn); // Accédez à l'état de connexion depuis le store Redux
+  const isLoggedIn = useSelector(state => state.isLoggedIn);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -18,7 +18,7 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    dispatch(setLoggedIn(false)); // Mettre à jour l'état de connexion dans le store Redux
+    dispatch(setLoggedIn(false)); 
     navigate('/login');
   };
 
@@ -40,7 +40,6 @@ function Navbar() {
         )}
         {sidebarVisible && (
           <>
-            <button>Vidéos favorites</button>
             {isLoggedIn && (
               <button onClick={handleLogout}>Déconnexion</button>
             )}

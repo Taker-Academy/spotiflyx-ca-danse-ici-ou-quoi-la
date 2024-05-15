@@ -19,11 +19,15 @@ function Search() {
 
     const addToFavorites = async (trackId) => {
         try {
-            const response = await axios.post('http://localhost:8080/fav/music', { link: trackId }, {
-                headers: {
-                    Authorization: 'Bearer ' + localStorage.getItem('token'),
-                },
-            });
+            const response = await axios.post(
+                'http://localhost:8080/fav/music',
+                { link: trackId },
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token'),
+                    },
+                }
+            );
             if (response.data.ok) {
                 setFavorites(prevFavorites => [...prevFavorites, trackId]);
             }
@@ -31,6 +35,7 @@ function Search() {
             console.error('Error adding to favorites:', error);
         }
     };
+    
 
     useEffect(() => {
         const fetchFavorites = async () => {

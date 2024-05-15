@@ -6,6 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
 import { setLoggedIn } from '../actions';
 import { Navigate } from 'react-router-dom';
+
+const CLIENT_ID = "fc00e50de4ed4be7bb06faa37378a36e";
+
 const Login = ({  onLoginSuccess }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -14,18 +17,25 @@ const Login = ({  onLoginSuccess }) => {
     const dispatch = useDispatch();
     const [redirect, setRedirect] = useState(false);
 
+    const handleSpotifyLogin = () => {
+        window.location.href = 'https://accounts.spotify.com/authorize?' + CLIENT_ID;
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            let response;
             if (isSignUp) {
-                await axios.post('http://localhost:8080/auth/register', { email, password });
+                response = await axios.post('http://localhost:8080/auth/register', { email, password });
+                localStorage.setItem('token', response.data.token);
                 toast.success('Inscription réussie !');
                 dispatch(setLoggedIn(true));
                 setRedirect(true); 
             } else {
-                await axios.post('http://localhost:8080/auth/login', { email, password });
+                response = await axios.post('http://localhost:8080/auth/login', { email, password });
+                localStorage.setItem('token', response.data.token); 
                 toast.success('Connexion réussie ! Bienvenue sur le site.');
                 dispatch(setLoggedIn(true));
+                handleSpotifyLogin();
                 setRedirect(true); 
             }
             console.log('Success');
@@ -34,6 +44,7 @@ const Login = ({  onLoginSuccess }) => {
             toast.error('Erreur lors de la connexion ! Veuillez vérifier vos identifiants.');
         }
     };
+    
 
     const toggleSignUp = () => {
         setIsSignUp(!isSignUp);
