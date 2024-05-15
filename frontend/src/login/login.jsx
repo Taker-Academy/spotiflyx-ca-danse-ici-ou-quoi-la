@@ -3,12 +3,16 @@ import axios from 'axios';
 import { Container, Card, Form, Button, Row, Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const Login = ({ onLoginSuccess }) => {
+import { useDispatch } from 'react-redux';
+import { setLoggedIn } from '../actions';
+import { Navigate } from 'react-router-dom';
+const Login = ({  onLoginSuccess }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
+    const dispatch = useDispatch();
+    const [redirect, setRedirect] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,10 +20,13 @@ const Login = ({ onLoginSuccess }) => {
             if (isSignUp) {
                 await axios.post('http://localhost:8080/auth/register', { email, password });
                 toast.success('Inscription réussie !');
+                dispatch(setLoggedIn(true));
+                setRedirect(true); 
             } else {
                 await axios.post('http://localhost:8080/auth/login', { email, password });
                 toast.success('Connexion réussie ! Bienvenue sur le site.');
-                onLoginSuccess();
+                dispatch(setLoggedIn(true));
+                setRedirect(true); 
             }
             console.log('Success');
         } catch (error) {
@@ -31,6 +38,10 @@ const Login = ({ onLoginSuccess }) => {
     const toggleSignUp = () => {
         setIsSignUp(!isSignUp);
     };
+
+    if (redirect) {
+        return <Navigate to="/home" />;
+    }
 
     return (
         <Container className="mt-5">

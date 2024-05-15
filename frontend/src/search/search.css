@@ -1,18 +1,13 @@
-body {
-    padding: 100;
-}
-
-.container {
-    margin: 0;
-    padding: 10px;
-}
-
+/* Ajoutez ces règles de style dans votre fichier search.css */
 .card-item {
-    margin: 10px;
-    height: 450px;
-    width: 250px;
+    margin-bottom: 20px; /* Ajout d'un espacement entre les cartes */
 }
 
-.img {
-    object-fit: contain;
+
+
+@media (min-width: 576px) {
+    .card-item {
+        flex: 0 0 calc(33.333% - 20px); /* Répartition en 3 colonnes sur les écrans de taille moyenne */
+        max-width: calc(33.333% - 20px);
+    }
 }

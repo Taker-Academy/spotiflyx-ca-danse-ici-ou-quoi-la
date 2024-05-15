@@ -1,61 +1,67 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './index.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import App from './App';
 import Navbar from './navbar/navbar';
 import reportWebVitals from './reportWebVitals';
 import Search from './search/search';
 import Login from './login/login';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Dashboard from './dashboard/dashboard';
+import { Provider } from 'react-redux';
+import ProtectedRoute from './protectedRoute/protectedRoute';
+import { store, persistor } from './store'; 
+import { PersistGate } from 'redux-persist/integration/react';
+import { useState } from 'react';
+import YouTubePlayer from './youtubePlayer/youtubePlayer';
+import { useSelector } from 'react-redux';
+import Favorites from './favorite/favorite';
 
 function AppRouter() {
+    const isLoggedIn = useSelector(state => state.isLoggedIn);
+    const [redirect, setRedirect] = useState(false);
+
     const handleLoginSuccess = () => {
-        setTimeout(() => {
-            ReactDOM.render(
-                <React.StrictMode>
-                    <Router>
-                        <Navbar />
-                        <Routes>
-                            <Route path="/" element={<Search />} />
-                            <Route path="/App" component={App} /> 
-                        </Routes>
-                    </Router>
-                </React.StrictMode>,
-                document.getElementById('root')
-            );
-        }, 2000);
+        setRedirect(true);
     };
+
+    if (redirect) {
+        return <Navigate to="/home" />;
+    }
 
     return (
         <Router>
             <div>
-                <Navbar />
+                <Navbar /> 
                 <Routes>
-                    <Route path="/" element={<Home onLoginSuccess={handleLoginSuccess} />} />
-                    <Route path="/App" component={App} /> 
+                    {isLoggedIn ? (
+                        <>
+                            <Route path="/home" element={<Search />} />
+                            <Route path="/App" element={<App />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path='/youtube-player/:videoId' element={<YouTubePlayer />} />
+                            <Route path='/fav' element={<Favorites></Favorites>}/>
+                        </>
+                    ) : (
+                        <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+                    )}
                 </Routes>
             </div>
         </Router>
     );
 }
 
-function Home({ onLoginSuccess }) {
-    return (
-        <div className="container"> 
-            <div className="card-container">
-                <Login onLoginSuccess={onLoginSuccess} />
-            </div>
-        </div>
-    );
-}
 
 ReactDOM.render(
-    <React.StrictMode>
-        <AppRouter />
+    <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
         <ToastContainer />
-    </React.StrictMode>,
+            <AppRouter />
+        </PersistGate>
+    </Provider>,
     document.getElementById('root')
 );
 

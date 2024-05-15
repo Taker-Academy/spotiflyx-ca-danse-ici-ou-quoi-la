@@ -1,18 +1,57 @@
-import { Container, InputGroup, FormControl, Button, Row, Card } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Container, InputGroup, FormControl, Button, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
-import './search.css'
+import './search.css';
+import { Link } from 'react-router-dom';
+import Spotify from '../spotifyPlayer/spotifyPlayer';
 
-const CLIENT_ID = "fc00e50de4ed4be7bb06faa37378a36e";
-const CLIENT_SECRET = "b4563d6250554cb4951d69b88848b4e5";
+
+const SPOTIFY_CLIENT_ID = "fc00e50de4ed4be7bb06faa37378a36e";
+const SPOTIFY_CLIENT_SECRET = "b4563d6250554cb4951d69b88848b4e5";
 
 function Search() {
     const [searchInput, setSearchInput] = useState("");
-    const [accessToken, setAccessToken] = useState("");
-    const [tracks, setTracks] = useState([]);
-    const [youTubeResults, setYouTubeResults] = useState([]);
+    const [spotifyAccessToken, setSpotifyAccessToken] = useState("");
+    const [spotifyTracks, setSpotifyTracks] = useState([]);
+    const [youtubeResults, setYoutubeResults] = useState([]);
+    const [spotifyURI, setSpotifyURI] = useState(null);
+    const [favorites, setFavorites] = useState([]);
 
+    const addToFavorites = async (trackId) => {
+        try {
+            const response = await axios.post('http://localhost:8080/fav/music', { link: trackId }, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token'),
+                },
+            });
+            if (response.data.ok) {
+                setFavorites(prevFavorites => [...prevFavorites, trackId]);
+            }
+        } catch (error) {
+            console.error('Error adding to favorites:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+            console.log("token" + localStorage.getItem('token'));
+
+                const response = await axios.get('http://localhost:8080/fav/music', {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token'),
+                    },
+                });
+                if (response.data.ok) {
+                    setFavorites(response.data.data.map(favorite => favorite.link));
+                }
+            } catch (error) {
+                console.error('Error fetching favorites:', error);
+            }
+        };
+
+        fetchFavorites();
+    }, []);
     useEffect(() => {
         const fetchSpotifyAccessToken = async () => {
             try {
@@ -21,36 +60,56 @@ function Search() {
                         grant_type: 'client_credentials',
                     },
                     headers: {
-                        Authorization: `Basic ${btoa(CLIENT_ID + ':' + CLIENT_SECRET)}`,
+                        Authorization: 'Basic ' + btoa(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET),
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                 });
-                setAccessToken(response.data.access_token);
+                setSpotifyAccessToken(response.data.access_token);
             } catch (error) {
                 console.error('Error fetching Spotify access token:', error);
             }
         };
 
-        if (searchInput) {
+        if (!searchInput) {
             fetchSpotifyAccessToken();
         }
+
+        fetchLatestYoutubeVideos();
     }, [searchInput]);
+
+    async function fetchLatestYoutubeVideos() {
+        try {
+            const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+                params: {
+                    part: 'snippet',
+                    maxResults: 3,
+                    order: 'date',
+                    key: 'AIzaSyBjOUzjmLx_gtoGVkPXjtm8v39JGLOybNo',
+                },
+            });
+            setYoutubeResults(response.data.items);
+        } catch (error) {
+            console.error('Error fetching YouTube data:', error);
+        }
+    }
+
 
     async function search() {
         console.log("Search for " + searchInput);
-        var trackParameters = {
+        var spotifyTrackParameters = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + accessToken
+                'Authorization': 'Bearer ' + spotifyAccessToken
             }
         }
-        var tracks = await fetch('https://api.spotify.com/v1/search?q=' + searchInput + '&type=track', trackParameters)
+        var spotifyTracks = await fetch('https://api.spotify.com/v1/search?q=' + searchInput + '&type=track', spotifyTrackParameters)
             .then(response => response.json())
             .then(data => data.tracks.items);
 
-        console.log(tracks);
-        setTracks(tracks);
+        console.log(spotifyTracks);
+        setSpotifyTracks(spotifyTracks);
+
         try {
             const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
                 params: {
@@ -60,7 +119,7 @@ function Search() {
                     key: 'AIzaSyBjOUzjmLx_gtoGVkPXjtm8v39JGLOybNo',
                 },
             });
-            setYouTubeResults(response.data.items);
+            setYoutubeResults(response.data.items);
         } catch (error) {
             console.error('Error fetching YouTube data:', error);
         }
@@ -74,7 +133,7 @@ function Search() {
                         placeholder="Search for Artist"
                         type='input'
                         onKeyPress={event => {
-                            if (event.key == "Enter") {
+                            if (event.key === "Enter") {
                                 search();
                             }
                         }}
@@ -85,32 +144,38 @@ function Search() {
                     </Button>
                 </InputGroup>
             </Container>
-            <div className="section-title">Music</div>
-            <Row className="mx-2 row row-cols-3">
-                {tracks.slice(0, 6).map(track => (
-                    <Card key={track.id} className="card-item">
-                        <Card.Img src={track.album.images[0].url} alt={track.album.name} className='img'/>
-                        <Card.Body>
-                            <Card.Title>{track.name}</Card.Title>
-                            <Card.Text>{track.artists.map(artist => artist.name).join(", ")}</Card.Text>
-                        </Card.Body>
-                    </Card>
+            <div className="section-title">Spotify Tracks</div>
+            <Row className="mx-2 row-cols-1 row-cols-md-2 row-cols-lg-3">
+                {spotifyTracks.slice(0, 6).map(track => (
+                    <Col key={track.id} xs={12} md={4} className="card-item mb-3">
+                        <Card>
+                            <Card.Img src={track.album.images[0].url} alt={track.album.name} className='img'/>
+                            <Card.Body>
+                                <Card.Title>{track.name}</Card.Title>
+                                <Card.Text>{track.artists.map(artist => artist.name).join(", ")}</Card.Text>
+                                <Button onClick={() => setSpotifyURI(track.uri)}>Play</Button>
+                                <Button onClick={() => addToFavorites(track.id)}>Like</Button>
+                            </Card.Body>
+                        </Card>
+                    </Col>
                 ))}
             </Row>
-            <div className="section-title">Videos</div>
-            <Row className="mx-2 row row-cols-3">
-                {youTubeResults.map((item) => (
-                    <Card key={item.id.videoId} className="card-item">
-                        <Card.Img src={item.snippet.thumbnails.medium.url} alt={item.snippet.title} className='img'/>
-                        <Card.Body>
-                            <Card.Title>{item.snippet.title}</Card.Title>
-                            <Card.Text>{item.snippet.description}</Card.Text>
-                        </Card.Body>
-                    </Card>
+            <div className="section-title">YouTube Videos</div>
+            <Row className="mx-2 row-cols-1 row-cols-md-2 row-cols-lg-3">
+                {youtubeResults.map((item) => (
+                    <Col key={item.id.videoId} xs={12} md={4} className="card-item mb-3">
+                        <Card>
+                            <Card.Img src={item.snippet.thumbnails.medium.url} alt={item.snippet.title} className='img'/>
+                            <Card.Body>
+                                <Card.Title>{item.snippet.title}</Card.Title>
+                                <Card.Text>{item.snippet.description}</Card.Text>
+                                <Link to={`/youtube-player/${item.id.videoId}`}>Watch</Link>
+                            </Card.Body>
+                        </Card>
+                    </Col>
                 ))}
             </Row>
-            <Container>
-            </Container>
+            {spotifyURI && <Spotify accessToken={spotifyAccessToken} uris={[spotifyURI]} />}
         </div>
     );
 }
