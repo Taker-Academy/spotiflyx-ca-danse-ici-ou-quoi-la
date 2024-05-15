@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Container, InputGroup, FormControl, Button, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
@@ -74,7 +75,6 @@ function Search() {
                 console.error('Error fetching Spotify access token:', error);
             }
         };
-
         if (!searchInput) {
             fetchSpotifyAccessToken();
         }
@@ -114,7 +114,6 @@ function Search() {
 
         console.log(spotifyTracks);
         setSpotifyTracks(spotifyTracks);
-
         try {
             const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
                 params: {

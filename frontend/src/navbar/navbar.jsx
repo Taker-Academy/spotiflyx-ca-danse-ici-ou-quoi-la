@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { FaLongArrowAltLeft, FaLongArrowAltRight } from "react-icons/fa";
 import './navbar.css';
@@ -15,7 +16,6 @@ function Navbar() {
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
-
   const handleLogout = () => {
     localStorage.removeItem('token');
     dispatch(setLoggedIn(false)); 
