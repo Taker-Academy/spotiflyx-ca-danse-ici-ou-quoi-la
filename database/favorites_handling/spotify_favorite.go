@@ -23,5 +23,4 @@ func Insert_in_spotify_favorites(database *gorm.DB, id string, link string) {
 		}
 	}
 	database.Create(models.Database_spotify_favorite{Id: id, Link: link})
-	return
 }

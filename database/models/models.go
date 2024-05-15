@@ -43,6 +43,11 @@ type Database_spotify_favorite struct {
 	Link string `gorm:"primary_key;autoIncrement:false", json:"link"`
 }
 
+type Database_youtube_favorite struct {
+	Id   string `gorm:"primary_key;autoIncrement:false", json:"Id"`
+	Link string `gorm:"primary_key;autoIncrement:false", json:"link"`
+}
+
 type Contex_favorite struct {
 	Link string `json:"link"`
 }
